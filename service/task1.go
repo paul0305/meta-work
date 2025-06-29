@@ -118,3 +118,91 @@ func ImStack() {
 	stack = stack[:len(stack)-1] // Pop
 	fmt.Println("After pop:", stack)
 }
+
+/**
+查找字符串数组中的最长公共前缀
+*/
+
+func findLongPubStr(strs [3]string) string {
+	if len(strs) == 0 {
+		return ""
+	}
+
+	// 取第一个字符串作为基准
+	prefix := strs[0]
+
+	for i := 1; i < len(strs); i++ {
+		j := 0
+		// 比较当前字符串与基准字符串的前缀
+		for j < len(prefix) && j < len(strs[i]) && prefix[j] == strs[i][j] {
+			j++
+		}
+		// 更新公共前缀
+		prefix = prefix[:j]
+		// 如果前缀为空，则没有公共前缀
+		if prefix == "" {
+			return ""
+		}
+	}
+	return prefix
+}
+
+/**
+给定一个表示 大整数 的整数数组 digits，其中 digits[i] 是整数的第 i 位数字。这些数字按从左到右，
+从最高位到最低位排列。这个大整数不包含任何前导 0。
+将大整数加 1，并返回结果的数字数组。
+*/
+
+func plusOne(digits []int) []int {
+	// 从最低位开始，从右到左遍历
+	for i := len(digits) - 1; i >= 0; i-- {
+		// 如果当前位不是9，则加1并返回结果
+		if digits[i] != 9 {
+			digits[i]++
+			return digits
+		}
+		// 如果当前位是9，则将当前位改为0
+		digits[i] = 0
+	}
+	// 如果所有位都是9，则将数组长度加1，并返回结果
+	digits = append([]int{1}, digits...)
+	return digits
+}
+
+/**
+给你一个 非严格递增排列 的数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次
+，返回删除后数组的新长度。元素的 相对顺序 应该保持 一致 。然后返回 nums 中唯一元素的个数
+*/
+
+func removeDuplicate(nums []int) int {
+	//定义快慢指针，慢指针指向不重复的数组位置，快指针遍历数组元素
+	slow, fast := 0, 1
+	for fast < len(nums) {
+		if nums[slow] != nums[fast] {
+			slow++
+			nums[slow] = nums[fast] //赋值值，覆盖掉重复的元素
+		}
+		fast++
+	}
+	return slow + 1
+}
+
+/**
+给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数
+*/
+
+func findManzu(nums []int, target int) []int {
+	//遍历数组，和map存储元素，判断map中是否存在target-nums[i]
+	m := make(map[int]int) //创建mapkey 为数组元素，value为数组元素索引
+	res := make([]int, 0, 2)
+	for i, v := range nums {
+		//如果遍历数组的元素和map中的元素存在，则返回索引
+		if index, ok := m[target-v]; ok {
+			res = append(res, index, i)
+			return res
+		} else {
+			m[v] = i
+		}
+	}
+	return res
+}
