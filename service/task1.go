@@ -124,9 +124,6 @@ func ImStack() {
 */
 
 func findLongPubStr(strs [3]string) string {
-	if len(strs) == 0 {
-		return ""
-	}
 
 	// 取第一个字符串作为基准
 	prefix := strs[0]
