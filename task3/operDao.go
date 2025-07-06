@@ -71,7 +71,6 @@ func (stu Student) delStudent() (n int, e error) {
 func transfer(toAccountId int32, fromAccountId int32, amount decimal.Decimal) error {
 	initDb()
 	tx := db.Begin()
-	defer tx.Rollback() // 确保异常时自动回滚
 
 	// 事务内查询付款账户
 	var fromAcc Accounts
@@ -86,6 +85,7 @@ func transfer(toAccountId int32, fromAccountId int32, amount decimal.Decimal) er
 	result := tx.Model(&Accounts{}).Where("id = ?", fromAccountId).
 		Update("balance", gorm.Expr("balance - ?", amount))
 	if result.Error != nil {
+		tx.Rollback()
 		return result.Error
 	}
 
@@ -93,6 +93,7 @@ func transfer(toAccountId int32, fromAccountId int32, amount decimal.Decimal) er
 	result = tx.Model(&Accounts{}).Where("id = ?", toAccountId).
 		Update("balance", gorm.Expr("balance + ?", amount))
 	if result.Error != nil {
+		tx.Rollback()
 		return result.Error
 	}
 	if result.RowsAffected == 0 {
@@ -106,6 +107,7 @@ func transfer(toAccountId int32, fromAccountId int32, amount decimal.Decimal) er
 		Balance:       amount,
 	}
 	if err := tx.Create(&trans).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
 
